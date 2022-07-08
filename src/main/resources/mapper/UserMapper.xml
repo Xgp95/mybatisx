@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatisplus.mybatisx.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.mybatisplus.mybatisx.bean.User">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="age" column="age" jdbcType="INTEGER"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,age,
+        email,is_delete
+    </sql>
+    <insert id="insertSelective">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="age != null">age,</if>
+            <if test="email != null">email,</if>
+            <if test="isDelete != null">is_delete,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=BIGINT},</if>
+            <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+            <if test="age != null">#{age,jdbcType=INTEGER},</if>
+            <if test="email != null">#{email,jdbcType=VARCHAR},</if>
+            <if test="isDelete != null">#{isDelete,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+    <insert id="insertAll">
+        insert into user
+        (id, name, age,
+         email, is_delete)
+        values (#{id,jdbcType=NUMERIC}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=NUMERIC},
+                #{email,jdbcType=VARCHAR}, #{isDelete,jdbcType=NUMERIC})
+
+    </insert>
+    <insert id="insertBatch">
+        insert into user(id,name,age,
+        email,is_delete)
+        values
+        <foreach collection="userCollection" item="item" separator=",">
+            (#{item.id,jdbcType=NUMERIC},#{item.name,jdbcType=VARCHAR},#{item.age,jdbcType=NUMERIC},
+            #{item.email,jdbcType=VARCHAR},#{item.isDelete,jdbcType=NUMERIC})
+        </foreach>
+    </insert>
+    <delete id="deleteByAgeBetween">
+        delete
+        from user
+        where age between #{beginAge,jdbcType=INTEGER} and #{endAge,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByAgeGreaterThan">
+        delete
+        from user
+        where age > #{age,jdbcType=NUMERIC}
+    </delete>
+    <delete id="delByIdLessThanEqual">
+        delete
+        from user
+        where id <![CDATA[  <= ]]> #{id,jdbcType=NUMERIC}
+    </delete>
+    <select id="selectAllByAgeGreaterThan" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where
+        age > #{age,jdbcType=NUMERIC}
+    </select>
+</mapper>
